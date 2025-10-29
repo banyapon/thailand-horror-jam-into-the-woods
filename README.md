@@ -2,16 +2,93 @@
 <img width="1200" height="475" alt="MainBanner" src="https://img.itch.zone/aW1hZ2UyL2phbS80MTAxMjAvMjMyODY4NjYucG5n/original/Nn1BNZ.png" />
 </div>
 
-## Game Play
-You are a detective summoned to a secluded village deep within the forest to investigate a series of mysterious deaths tied to dark sorcery. Your suspects are the strange inhabitants of this remote community. You must race against time before the prime suspect sends an evil spirit to eliminate you.
+# Thailand Horror Jam 2025 — *“Into the Woods”*
+**WebGL & PC Game**
 
-A profound mystery, death, and utter despair await you within this village and its forest.
+> *Developed for the Thailand Horror Jam 2025, organized by BitEgg and TGA (Thai Game Software Industry Association).*
 
-## 
+---
+
+## Project Overview
+
+**Into the Woods** is a horror investigation game created during the **Thailand Horror Jam 2025** (Oct 25–31, 2025), under the theme **“Sign.”**  
+The project was developed solo within one week using **TypeScript**, **Three.js**, and **Electron** — aiming to deliver a native WebGL experience with a responsive layout for both desktop and mobile browsers.
+
+Although the mobile interface supports a **Virtual Joystick**, the full gameplay experience is best enjoyed on **PC Browser** or **Electron Desktop App**.
+
+---
+
+## Game Modes
+
+### 1. Story Mode
+Investigate mysterious deaths deep in the woods — collect evidence, interrogate witnesses, and accuse suspects **before the summoned spirit attacks you.**
+
+### 2. Despair Mode
+A survival challenge featuring **seven villagers** who must find a way to destroy all **ritual altars** before they are hunted down.  
+There’s no main character or storyline — only instinct and survival.
+
+---
+
+## Jam Limitations & Theme Integration
+
+| Rule | Implementation |
+|------|----------------|
+| **Decoding** | Players must interpret and solve coded clues during interrogations. |
+| **I Can’t See** | Dynamic weather and fog effects reduce visibility during critical moments. |
+
+---
+
+## Controls
+
+| Action | Input |
+|--------|--------|
+| Move | **WASD** / **Arrow Keys** / **Virtual Joystick** |
+| Interact / Inspect | **E** / **Click / Touch** |
+| Follow Target | **P** |
+| Show Hint | **H** |
+
+---
+
+## 🧠 Technical Stack
+
+- **Language:** TypeScript (TSX Native Web Script)
+- **Rendering:** Three.js (WebGL)
+- **Desktop Runtime:** Electron + Electron Builder
+- **Graphics:** Adobe Photoshop + Generative AI assisted redrawing  
+- **Responsive Design:** Partial (Mobile optimization in progress)
+
+---
+
+## Development Notes
+
+This project was built rapidly within the 7-day jam timeframe.  
+All source code was written **natively from scratch**, without pre-built frameworks or structured architecture — expect some chaotic parts in the codebase 😅.  
+Graphics were manually designed with **Photoshop**, and some art assets were assisted using **Generative AI redrawing** for refinement and concept referencing.
+
+---
+
+##Developer
+
+**Solo Developer:** [Banyapon Poolsawas](https://github.com/banyapon)  
+📍 Bangkok, Thailand  
+
+---
+
+## Acknowledgments
+
+Special thanks to  
+**BitEgg** and **TGA (Thai Game Software Industry Association)**  
+for organizing **Thailand Horror Jam 2025**, and to all creators who shared their hauntingly inspiring work.
+
+---
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+**Prerequisites:** Node.js
+
+1. Install dependencies:
+   ```bash
+   npm install
 
 
 1. Install dependencies:
