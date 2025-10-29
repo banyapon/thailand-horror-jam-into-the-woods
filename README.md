@@ -9,10 +9,6 @@
 
 ---
 
-<div align="center">
-<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/5.png" />
-</div>
-
 ## Project Overview
 
 **Into the Woods** is a horror investigation game created during the **Thailand Horror Jam 2025** (Oct 25–31, 2025), under the theme **“Sign.”**  
@@ -25,15 +21,17 @@ Although the mobile interface supports a **Virtual Joystick**, the full gameplay
 ---
 
 ## Game Modes
+<div align="center">
 <img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/1.png" />
 
 <img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/2.png" />
-
+</div>
 ### 1. Story Mode
-
+<div align="center">
 <img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/3.png" />
 
 <img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/6.png" />
+</div>
 Investigate mysterious deaths deep in the woods — collect evidence, interrogate witnesses, and accuse suspects **before the summoned spirit attacks you.**
 
 ### 2. Despair Mode
@@ -71,6 +69,10 @@ There’s no main character or storyline — only instinct and survival.
 - **Responsive Design:** Partial (Mobile optimization in progress)
 
 ---
+
+<div align="center">
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/5.png" />
+</div>
 
 ## Development Notes
 
