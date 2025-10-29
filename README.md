@@ -1,5 +1,5 @@
 <div align="center">
-<img width="1200" height="475" alt="MainBanner" src="https://img.itch.zone/aW1hZ2UyL2phbS80MTAxMjAvMjMyODY4NjYucG5n/original/Nn1BNZ.png" />
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/7.png" />
 </div>
 
 # Thailand Horror Jam 2025 — *“Into the Woods”*
@@ -9,18 +9,31 @@
 
 ---
 
+<div align="center">
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/5.png" />
+</div>
+
 ## Project Overview
 
 **Into the Woods** is a horror investigation game created during the **Thailand Horror Jam 2025** (Oct 25–31, 2025), under the theme **“Sign.”**  
 The project was developed solo within one week using **TypeScript**, **Three.js**, and **Electron** — aiming to deliver a native WebGL experience with a responsive layout for both desktop and mobile browsers.
+
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/4.png" />
 
 Although the mobile interface supports a **Virtual Joystick**, the full gameplay experience is best enjoyed on **PC Browser** or **Electron Desktop App**.
 
 ---
 
 ## Game Modes
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/1.png" />
+
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/2.png" />
 
 ### 1. Story Mode
+
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/3.png" />
+
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/6.png" />
 Investigate mysterious deaths deep in the woods — collect evidence, interrogate witnesses, and accuse suspects **before the summoned spirit attacks you.**
 
 ### 2. Despair Mode
