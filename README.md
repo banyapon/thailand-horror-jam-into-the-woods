@@ -49,7 +49,7 @@ There’s no main character or storyline — only instinct and survival.
 
 ---
 
-## 🧠 Technical Stack
+## Technical Stack
 
 - **Language:** TypeScript (TSX Native Web Script)
 - **Rendering:** Three.js (WebGL)
@@ -62,7 +62,7 @@ There’s no main character or storyline — only instinct and survival.
 ## Development Notes
 
 This project was built rapidly within the 7-day jam timeframe.  
-All source code was written **natively from scratch**, without pre-built frameworks or structured architecture — expect some chaotic parts in the codebase 😅.  
+All source code was written **natively from scratch**, without pre-built frameworks or structured architecture — expect some chaotic parts in the codebase.  
 Graphics were manually designed with **Photoshop**, and some art assets were assisted using **Generative AI redrawing** for refinement and concept referencing.
 
 ---
@@ -70,7 +70,7 @@ Graphics were manually designed with **Photoshop**, and some art assets were ass
 ##Developer
 
 **Solo Developer:** [Banyapon Poolsawas](https://github.com/banyapon)  
-📍 Bangkok, Thailand  
+Bangkok, Thailand  
 
 ---
 
@@ -87,11 +87,17 @@ for organizing **Thailand Horror Jam 2025**, and to all creators who shared thei
 **Prerequisites:** Node.js
 
 1. Install dependencies:
-   ```bash
-   npm install
-
-
-1. Install dependencies:
    `npm install`
 2. Run the app:
    `npm run dev`
+
+## Run Build and Pack to Windows, Linux and Mac App
+
+1. Install dependencies:
+   `npm install electron --save-dev`
+   `npm install electron-builder --save-dev`
+2. Run and Test:
+   `npm run build`
+   `npm start`
+3. Run an Electron Builder:
+   `npm run dist`
