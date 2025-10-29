@@ -14,7 +14,7 @@
 **Into the Woods** is a horror investigation game created during the **Thailand Horror Jam 2025** (Oct 25–31, 2025), under the theme **“Sign.”**  
 The project was developed solo within one week using **TypeScript**, **Three.js**, and **Electron** — aiming to deliver a native WebGL experience with a responsive layout for both desktop and mobile browsers.
 
-<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/4.png" />
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/5.png" />
 
 Although the mobile interface supports a **Virtual Joystick**, the full gameplay experience is best enjoyed on **PC Browser** or **Electron Desktop App**.
 
@@ -71,7 +71,7 @@ There’s no main character or storyline — only instinct and survival.
 ---
 
 <div align="center">
-<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/5.png" />
+<img width="1200" height="475" alt="MainBanner" src="https://raw.githubusercontent.com/banyapon/thailand-horror-jam-into-the-woods/refs/heads/main/screenshots/4.png" />
 </div>
 
 ## Development Notes
