@@ -69,7 +69,7 @@ There’s no main character or storyline — only instinct and survival.
 - **Language:** TypeScript (TSX Native Web Script)
 - **Rendering:** Three.js (WebGL)
 - **Desktop Runtime:** Electron + Electron Builder
-- **Graphics:** Adobe Photoshop + Generative AI assisted redrawing  
+- **Graphics:** Adobe Photoshop + PhotoPea, Some Icon Generative AI assisted redrawing  
 - **Responsive Design:** Partial (Mobile optimization in progress)
 
 ---
