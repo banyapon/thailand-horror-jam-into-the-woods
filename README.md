@@ -9,6 +9,10 @@
 
 ---
 
+## Play Online on Itch.io
+[Into the woods](https://daydev.itch.io/intothewoods)  
+[Into the woods Vercel](https://horrorjam2025.vercel.app/)  
+
 ## Project Overview
 
 **Into the Woods** is a horror investigation game created during the **Thailand Horror Jam 2025** (Oct 25–31, 2025), under the theme **“Sign.”**  
