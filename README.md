@@ -82,7 +82,7 @@ Graphics were manually designed with **Photoshop**, and some art assets were ass
 
 ##Developer
 
-**Solo Developer:** [Banyapon Poolsawas](https://github.com/banyapon)  
+** Solo Developer:** [Banyapon Poolsawas](https://github.com/banyapon)  
 Bangkok, Thailand  
 
 ---
