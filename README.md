@@ -10,7 +10,10 @@
 ---
 
 ## Play Online on Itch.io
-[Into the woods](https://daydev.itch.io/intothewoods)  
+<div align="center">
+<iframe frameborder="0" src="https://itch.io/embed/3992852?border_width=4&amp;link_color=9e2835" width="558" height="173"><a href="https://daydev.itch.io/intothewoods">Into the Woods by DAYDEV</a></iframe>
+</div>
+
 [Into the woods Vercel](https://horrorjam2025.vercel.app/)  
 
 ## Project Overview
