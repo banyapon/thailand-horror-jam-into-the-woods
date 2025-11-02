@@ -1529,8 +1529,8 @@ input[type=range]::-moz-range-track {
 .story-slide {
     position: absolute;
     top: 10%;
-    left: 25%;
-    width: 50%;
+    left: 35%;
+    width: 35%;
     height: 60%;
     background-size: cover;
     background-position: center;
