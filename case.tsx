@@ -1,3 +1,4 @@
+
 import { baseUrl } from './global';
 
 export interface LangString {
@@ -61,27 +62,60 @@ export interface CaseData {
   };
 }
 
-const placeholderDialogue = (evidenceIds: string[]): { [key: string]: DialogueNode } => ({
-  start: {
-    text: {
-      th: "เกิดเรื่องน่ากลัวขึ้น... ข้าไม่กล้าพูดอะไรมากไปกว่านี้",
-      en: "Something terrible happened... I dare not say more."
-    },
-    options: [
-      { text: { th: "คุณเห็นอะไรผิดปกติไหม?", en: "Did you see anything unusual?" }, next: 'ask_unusual' },
-      { text: { th: "แถวนี้มีเรื่องแปลกๆ เกิดขึ้นบ่อยหรือเปล่า?", en: "Do strange things happen here often?" }, next: 'ask_strange' },
-      { text: { th: "แสดงหลักฐาน", en: "Present Evidence" }, action: { type: 'present_evidence' }, next: 'start' },
-      { text: { th: "กล่าวหา", en: "Accuse" }, action: { type: 'accuse' }, next: 'accused' },
-    ],
-  },
-  ask_unusual: { text: { th: "ข้าเห็นแสงไฟประหลาดลอยอยู่เหนือป่าเมื่อคืนก่อน... ไม่รู้ว่ามันคืออะไร", en: "I saw a strange light floating above the forest last night... I don't know what it was." } },
-  ask_strange: { text: { th: "ชาวบ้านลือกันว่ามีคนทำคุณไสยในป่าแถบนี้... ข้าไม่คิดว่ามันจะเป็นเรื่องจริงจนกระทั่งตอนนี้", en: "The villagers whisper of dark magic in these woods... I didn't believe it until now." } },
-  accused: { text: { th: "ท่านกล่าวหาข้างั้นรึ! ข้าเป็นผู้บริสุทธิ์!", en: "You accuse me! I am innocent!" } },
-  ...evidenceIds.reduce((acc, id) => {
-      acc[`react_${id}`] = { text: { th: "นี่มัน... ข้าไม่เคยเห็นของชิ้นนี้มาก่อนเลย", en: "This... I've never seen this before in my life." } };
-      return acc;
-  }, {} as {[key: string]: DialogueNode})
-});
+const placeholderDialogue = (evidenceIds: string[]): { [key: string]: DialogueNode } => {
+    const starts: LangString[] = [
+        { th: "มีอะไรให้ฉันช่วยไหม?", en: "Is there anything I can help with?" },
+        { th: "เรื่องที่เกิดขึ้นมันน่ากลัวจริงๆ... คุณมีอะไรจะถามฉันรึเปล่า?", en: "What happened is truly terrible... Do you have anything to ask me?" },
+        { th: "ฉันยังช็อคไม่หายเลย คุณอยากรู้อะไรเหรอ?", en: "I'm still in shock. What do you want to know?" },
+        { th: "คุณนักสืบ... ฉันหวังว่าคุณจะจับคนร้ายได้เร็วๆ นี้นะ", en: "Detective... I hope you catch the culprit soon." }
+    ];
+
+    const unusuals: LangString[] = [
+        { th: "ไม่นะ ทุกอย่างก็ดูปกติเหมือนทุกวันสำหรับฉัน", en: "No, everything seemed normal like any other day to me." },
+        { th: "ฉันนึกไม่ออกจริงๆ ... ไม่เห็นจะมีอะไรแปลกไปเลย", en: "I really can't think of anything... Nothing seemed strange at all." },
+        { th: "ก็... เมื่อคืนฉันได้ยินเสียงหมาหอนแปลกๆ  แต่ก็อาจจะไม่มีอะไร", en: "Well... I heard some strange dog howling last night, but it might be nothing." }
+    ];
+
+    const stranges: LangString[] = [
+        { th: "ก็มีแค่เรื่องเล่าเก่าๆ ที่คนแก่เขาพูดกันน่ะ ไม่น่าจะมีอะไร", en: "Just old stories the elders talk about. Probably nothing." },
+        { th: "บางคนก็พูดถึงเรื่องผีสางนางไม้ในป่าแถวนี้ แต่ฉันไม่ค่อยเชื่อเท่าไหร่", en: "Some people talk about spirits in these woods, but I don't really believe in that stuff." },
+        { th: "ที่นี่ก็เป็นหมู่บ้านเงียบๆ นะ ไม่ค่อยมีเรื่องแปลกๆ เกิดขึ้นหรอก", en: "This is a quiet village. Strange things don't happen here often." }
+    ];
+    
+    const accuseds: LangString[] = [
+        { th: "อะไรนะ! คุณกล่าวหาฉันเหรอ! ฉันเป็นผู้บริสุทธิ์นะ!", en: "What! You accuse me! I am innocent!" },
+        { th: "คุณต้องเข้าใจผิดแน่ๆ! ไม่ใช่ฉัน!", en: "You must be mistaken! It wasn't me!" },
+        { th: "นี่มันเรื่องบ้าอะไรกัน... ฉันไม่ได้ทำ!", en: "This is crazy... I didn't do it!" }
+    ];
+
+    const innocentReactions: LangString[] = [
+      { th: "นี่มัน... ฉันไม่เคยเห็นของชิ้นนี้มาก่อนเลย", en: "This... I've never seen this before in my life." },
+      { th: "ของสิ่งนี้มันเกี่ยวอะไรกับเรื่องนี้เหรอ?", en: "What does this have to do with anything?" },
+      { th: "ฉันไม่รู้ว่านี่คืออะไร บอกตามตรง", en: "I honestly don't know what this is." },
+      { th: "ดูไม่คุ้นเลยนะ... คุณเจอมันที่ไหนเหรอ?", en: "It doesn't look familiar... Where did you find it?" }
+    ];
+
+    const tree: { [key: string]: DialogueNode } = {
+        start: {
+            text: starts[Math.floor(Math.random() * starts.length)],
+            options: [
+                { text: { th: "คุณเห็นอะไรผิดปกติไหม?", en: "Did you see anything unusual?" }, next: 'ask_unusual' },
+                { text: { th: "แถวนี้มีเรื่องแปลกๆ เกิดขึ้นบ่อยหรือเปล่า?", en: "Do strange things happen here often?" }, next: 'ask_strange' },
+                { text: { th: "แสดงหลักฐาน", en: "Present Evidence" }, action: { type: 'present_evidence' }, next: 'start' },
+                { text: { th: "กล่าวหา", en: "Accuse" }, action: { type: 'accuse' }, next: 'accused' },
+            ],
+        },
+        ask_unusual: { text: unusuals[Math.floor(Math.random() * unusuals.length)] },
+        ask_strange: { text: stranges[Math.floor(Math.random() * stranges.length)] },
+        accused: { text: accuseds[Math.floor(Math.random() * accuseds.length)] },
+    };
+
+    evidenceIds.forEach(id => {
+        tree[`react_${id}`] = { text: innocentReactions[Math.floor(Math.random() * innocentReactions.length)] };
+    });
+
+    return tree;
+};
 
 const placeholderSuspects = (motive: LangString, alibi: LangString) => ({
     motive,
@@ -100,17 +134,17 @@ const case0: CaseData = {
       role: { th: "พยาน #1", en: "Witness #1" }, 
       dialogueTree: {
         start: {
-          text: { th: "มีอะไรให้ข้าช่วยรึ ท่านนักสืบ?", en: "How can I help you, detective?" },
+          text: { th: "มีอะไรให้ฉันช่วยไหม คุณนักสืบ?", en: "How can I help you, detective?" },
           options: [
             { text: { th: "คุณเห็นอะไรผิดปกติไหม?", en: "Did you see anything unusual?" }, next: 'ask_unusual' },
             { text: { th: "แสดงหลักฐาน", en: "Present Evidence" }, action: { type: 'present_evidence' }, next: 'start' },
             { text: { th: "กล่าวหา", en: "Accuse" }, action: { type: 'accuse' }, next: 'accused' },
           ],
         },
-        ask_unusual: { text: { th: "ข้าไม่เห็นอะไรเลย... ก็แค่คืนที่เงียบสงัดเหมือนเคย", en: "I saw nothing... just another quiet night." } },
-        accused: { text: { th: "ท่านกล่าวหาข้างั้นรึ! ข้าเป็นผู้บริสุทธิ์!", en: "You accuse me! I am innocent!" } },
-        react_c0_red_cloth: { text: { th: "เศษผ้านี่รึ? ดูคุ้นๆ นะ แต่ข้านึกไม่ออกจริงๆ ว่าเคยเห็นที่ไหน", en: "This cloth scrap? It looks familiar, but I can't quite place it." } },
-        react_c0_letter: { text: { th: "จดหมายรึ? ข้าไม่รู้เรื่องจดหมายอะไรทั้งนั้น", en: "A letter? I don't know anything about a letter." } },
+        ask_unusual: { text: { th: "ฉันไม่เห็นอะไรเลย... ก็แค่คืนที่เงียบสงัดเหมือนเคย", en: "I saw nothing... just another quiet night." } },
+        accused: { text: { th: "คุณกล่าวหาฉันเหรอ! ฉันบริสุทธิ์นะ!", en: "You accuse me! I am innocent!" } },
+        react_c0_red_cloth: { text: { th: "เศษผ้านี่เหรอ? ดูคุ้นๆ นะ แต่ฉันนึกไม่ออกจริงๆ ว่าเคยเห็นที่ไหน", en: "This cloth scrap? It looks familiar, but I can't quite place it." } },
+        react_c0_letter: { text: { th: "จดหมายเหรอ? ฉันไม่รู้เรื่องจดหมายอะไรทั้งนั้น", en: "A letter? I don't know anything about a letter." } },
         react_c0_footprint_cast: { text: { th: "รอยเท้าใหญ่ขนาดนี้! น่ากลัวจริงๆ ต้องเป็นสัตว์ร้ายแน่ๆ", en: "Such a large footprint! It must be a beast, how terrifying." } },
       } 
     },
@@ -118,17 +152,17 @@ const case0: CaseData = {
       role: { th: "พยาน #2", en: "Witness #2" }, 
       dialogueTree: {
         start: {
-          text: { th: "น่ากลัวจริงๆ... หวังว่าท่านจะจับคนร้ายได้เร็วๆ", en: "It's so scary... I hope you catch the culprit soon." },
+          text: { th: "น่ากลัวจริงๆ... หวังว่าคุณจะจับคนร้ายได้เร็วๆ", en: "It's so scary... I hope you catch the culprit soon." },
           options: [
             { text: { th: "แถวนี้มีเรื่องแปลกๆ เกิดขึ้นบ่อยหรือเปล่า?", en: "Do strange things happen here often?" }, next: 'ask_strange' },
             { text: { th: "แสดงหลักฐาน", en: "Present Evidence" }, action: { type: 'present_evidence' }, next: 'start' },
             { text: { th: "กล่าวหา", en: "Accuse" }, action: { type: 'accuse' }, next: 'accused' },
           ],
         },
-        ask_strange: { text: { th: "ชาวบ้านลือกันว่ามีคนทำคุณไสยในป่าแถบนี้... ข้าไม่คิดว่ามันจะเป็นเรื่องจริงจนกระทั่งตอนนี้", en: "The villagers whisper of dark magic in these woods... I didn't believe it until now." } },
-        accused: { text: { th: "ข้าเนี่ยนะ? ท่านต้องล้อเล่นแน่ๆ!", en: "Me? You must be joking!" } },
-        react_c0_red_cloth: { text: { th: "ผ้าสีแดง... ดูเหมือนจะเป็นของผู้หญิงนะ ข้าไม่รู้ว่าเป็นของใคร", en: "Red cloth... It looks like it belongs to a woman. I don't know whose it is." } },
-        react_c0_letter: { text: { th: "ข้าเห็นผู้ตายถือจดหมายคล้ายๆ แบบนี้เมื่อวันก่อน... เขาดูวิตกกังวลมาก", en: "I saw the deceased holding a similar letter the other day... they looked very worried." } },
+        ask_strange: { text: { th: "ชาวบ้านลือกันว่ามีคนทำคุณไสยในป่าแถบนี้... ฉันไม่คิดว่ามันจะเป็นเรื่องจริงจนกระทั่งตอนนี้", en: "The villagers whisper of dark magic in these woods... I didn't believe it until now." } },
+        accused: { text: { th: "ฉันเนี่ยนะ? คุณต้องล้อเล่นแน่ๆ!", en: "Me? You must be joking!" } },
+        react_c0_red_cloth: { text: { th: "ผ้าสีแดง... ดูเหมือนจะเป็นของผู้หญิงนะ ฉันไม่รู้ว่าเป็นของใคร", en: "Red cloth... It looks like it belongs to a woman. I don't know whose it is." } },
+        react_c0_letter: { text: { th: "ฉันเห็นผู้ตายถือจดหมายคล้ายๆ แบบนี้เมื่อวันก่อน... เขาดูวิตกกังวลมาก", en: "I saw the deceased holding a similar letter the other day... they looked very worried." } },
         react_c0_footprint_cast: { text: { th: "รอยเท้านี่มัน... ไม่เหมือนรอยเท้าคนเลย", en: "This footprint... it doesn't look human." } },
       } 
     },
@@ -170,13 +204,13 @@ const case0: CaseData = {
   },
   genericReactions: {
     murderer: [
-        { th: "ท่านได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของข้า!", en: "Where did you get this?! It's not mine!" },
+        { th: "คุณได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของฉัน!", en: "Where did you get this?! It's not mine!" },
         { th: "นี่มัน... เรื่องเข้าใจผิดกันไปใหญ่แล้ว", en: "This... this is a huge misunderstanding." }
     ],
     innocent: [
-        { th: "ข้าไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
+        { th: "ฉันไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
         { th: "สิ่งนี้เกี่ยวข้องกับเรื่องที่เกิดขึ้นได้อย่างไร?", en: "What does this have to do with anything?" },
-        { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของข้า", en: "That's interesting, but it's not mine." }
+        { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของฉัน", en: "That's interesting, but it's not mine." }
     ]
   }
 };
@@ -208,7 +242,7 @@ const case1: CaseData = {
     npc7: placeholderSuspects({th: "ท่าทางมีพิรุธ", en: "Appears suspicious."}, {th: "อ้างว่าไม่เห็นอะไร", en: "Claims to have seen nothing."}),
   },
   evidence: [
-    { id: 'c1_doll', name: { th: 'ตุ๊กตาฟาง', en: 'Straw Doll' }, description: { th: 'ตุ๊กตาฟางมีเส้นผมของผู้ตายพันอยู่ ถูกแทงด้วยของมีคม', en: 'A straw doll, wrapped with the deceased\'s hair, has been pierced by a sharp object.' }, image: `${baseUrl}clue3.png` },
+    { id: 'c1_doll', name: { th: 'ตุ๊กตาฟาง', en: 'Straw Doll' }, description: { th: 'ตุ๊กตาฟางมีเส้นฉันของผู้ตายพันอยู่ ถูกแทงด้วยของมีคม', en: 'A straw doll, wrapped with the deceased\'s hair, has been pierced by a sharp object.' }, image: `${baseUrl}clue3.png` },
     { id: 'c1_talisman', name: { th: 'ยันต์อาคม', en: 'Cursed Talisman' }, description: { th: 'ยันต์ที่เขียนด้วยอักขระโบราณ ใช้ในการเรียกวิญญาณร้าย', en: 'A talisman with ancient script, used to summon evil spirits.' }, image: `${baseUrl}clue4.png` },
     { id: 'c1_ashes', name: { th: 'กองขี้เถ้าเย็น', en: 'Cold Ashes' }, description: { th: 'กองขี้เถ้าที่เย็นสนิทจากการทำพิธีบางอย่าง มีกลิ่นสมุนไพรแปลกๆ', en: 'A cold pile of ashes from a recent ritual, smelling of strange herbs.' }, image: `${baseUrl}clue18.png` },
   ],
@@ -229,13 +263,13 @@ const case1: CaseData = {
   },
   genericReactions: {
     murderer: [
-        { th: "ท่านกำลังกล่าวหาข้าด้วยเรื่องงมงายเช่นนี้รึ?", en: "Are you accusing me with such superstitious nonsense?" },
-        { th: "ข้า... ข้าไม่รู้ว่ามันมาอยู่ที่นี่ได้อย่างไร!", en: "I... I don't know how that got here!" }
+        { th: "คุณกำลังกล่าวหาฉันด้วยเรื่องงมงายเช่นนี้เหรอ?", en: "Are you accusing me with such superstitious nonsense?" },
+        { th: "ฉัน... ฉันไม่รู้ว่ามันมาอยู่ที่นี่ได้อย่างไร!", en: "I... I don't know how that got here!" }
     ],
     innocent: [
         { th: "นี่มันอะไรกัน? ดูน่าขนลุก", en: "What is this? It looks creepy." },
-        { th: "ข้าเคยได้ยินเรื่องของแบบนี้ แต่ไม่เคยเห็นกับตา", en: "I've heard of things like this, but never seen one myself." },
-        { th: "หวังว่าท่านจะไม่คิดว่าข้าเกี่ยวข้องกับเรื่องแบบนี้นะ", en: "I hope you don't think I'm involved in this sort of thing." }
+        { th: "ฉันเคยได้ยินเรื่องของแบบนี้ แต่ไม่เคยเห็นกับตา", en: "I've heard of things like this, but never seen one myself." },
+        { th: "หวังว่าคุณจะไม่คิดว่าฉันเกี่ยวข้องกับเรื่องแบบนี้นะ", en: "I hope you don't think I'm involved in this sort of thing." }
     ]
   }
 };
@@ -284,13 +318,13 @@ const case2: CaseData = {
   },
   genericReactions: {
     murderer: [
-        { th: "ท่านกำลังกล่าวหาข้าด้วยเรื่องงมงายเช่นนี้รึ?", en: "Are you accusing me with such superstitious nonsense?" },
-        { th: "ข้า... ข้าไม่รู้ว่ามันมาอยู่ที่นี่ได้อย่างไร!", en: "I... I don't know how that got here!" }
+        { th: "คุณกำลังกล่าวหาฉันด้วยเรื่องงมงายเช่นนี้เหรอ?", en: "Are you accusing me with such superstitious nonsense?" },
+        { th: "ฉัน... ฉันไม่รู้ว่ามันมาอยู่ที่นี่ได้อย่างไร!", en: "I... I don't know how that got here!" }
     ],
     innocent: [
         { th: "นี่มันอะไรกัน? ดูน่าขนลุก", en: "What is this? It looks creepy." },
-        { th: "ข้าเคยได้ยินเรื่องของแบบนี้ แต่ไม่เคยเห็นกับตา", en: "I've heard of things like this, but never seen one myself." },
-        { th: "หวังว่าท่านจะไม่คิดว่าข้าเกี่ยวข้องกับเรื่องแบบนี้นะ", en: "I hope you don't think I'm involved in this sort of thing." }
+        { th: "ฉันเคยได้ยินเรื่องของแบบนี้ แต่ไม่เคยเห็นกับตา", en: "I've heard of things like this, but never seen one myself." },
+        { th: "หวังว่าคุณจะไม่คิดว่าฉันเกี่ยวข้องกับเรื่องแบบนี้นะ", en: "I hope you don't think I'm involved in this sort of thing." }
     ]
   }
 };
@@ -339,13 +373,13 @@ const case3: CaseData = {
   },
   genericReactions: {
     murderer: [
-        { th: "ท่านกำลังกล่าวหาข้าด้วยเรื่องงมงายเช่นนี้รึ?", en: "Are you accusing me with such superstitious nonsense?" },
-        { th: "ข้า... ข้าไม่รู้ว่ามันมาอยู่ที่นี่ได้อย่างไร!", en: "I... I don't know how that got here!" }
+        { th: "คุณกำลังกล่าวหาฉันด้วยเรื่องงมงายเช่นนี้เหรอ?", en: "Are you accusing me with such superstitious nonsense?" },
+        { th: "ฉัน... ฉันไม่รู้ว่ามันมาอยู่ที่นี่ได้อย่างไร!", en: "I... I don't know how that got here!" }
     ],
     innocent: [
         { th: "นี่มันอะไรกัน? ดูน่าขนลุก", en: "What is this? It looks creepy." },
-        { th: "ข้าเคยได้ยินเรื่องของแบบนี้ แต่ไม่เคยเห็นกับตา", en: "I've heard of things like this, but never seen one myself." },
-        { th: "หวังว่าท่านจะไม่คิดว่าข้าเกี่ยวข้องกับเรื่องแบบนี้นะ", en: "I hope you don't think I'm involved in this sort of thing." }
+        { th: "ฉันเคยได้ยินเรื่องของแบบนี้ แต่ไม่เคยเห็นกับตา", en: "I've heard of things like this, but never seen one myself." },
+        { th: "หวังว่าคุณจะไม่คิดว่าฉันเกี่ยวข้องกับเรื่องแบบนี้นะ", en: "I hope you don't think I'm involved in this sort of thing." }
     ]
   }
 };
@@ -392,13 +426,13 @@ const case4: CaseData = {
     },
     genericReactions: {
         murderer: [
-            { th: "ท่านได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของข้า!", en: "Where did you get this?! It's not mine!" },
+            { th: "คุณได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของฉัน!", en: "Where did you get this?! It's not mine!" },
             { th: "นี่มัน... เรื่องเข้าใจผิดกันไปใหญ่แล้ว", en: "This... this is a huge misunderstanding." }
         ],
         innocent: [
-            { th: "ข้าไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
+            { th: "ฉันไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
             { th: "สิ่งนี้เกี่ยวข้องกับเรื่องที่เกิดขึ้นได้อย่างไร?", en: "What does this have to do with anything?" },
-            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของข้า", en: "That's interesting, but it's not mine." }
+            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของฉัน", en: "That's interesting, but it's not mine." }
         ]
       }
 };
@@ -445,13 +479,13 @@ const case5: CaseData = {
     },
     genericReactions: {
         murderer: [
-            { th: "ท่านได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของข้า!", en: "Where did you get this?! It's not mine!" },
+            { th: "คุณได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของฉัน!", en: "Where did you get this?! It's not mine!" },
             { th: "นี่มัน... เรื่องเข้าใจผิดกันไปใหญ่แล้ว", en: "This... this is a huge misunderstanding." }
         ],
         innocent: [
-            { th: "ข้าไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
+            { th: "ฉันไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
             { th: "สิ่งนี้เกี่ยวข้องกับเรื่องที่เกิดขึ้นได้อย่างไร?", en: "What does this have to do with anything?" },
-            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของข้า", en: "That's interesting, but it's not mine." }
+            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของฉัน", en: "That's interesting, but it's not mine." }
         ]
       }
 };
@@ -482,11 +516,11 @@ const case6: CaseData = {
         npc7: placeholderSuspects({th: "ท่าทางมีพิรุธ", en: "Appears suspicious."}, {th: "อ้างว่าไม่เห็นอะไร", en: "Claims to have seen nothing."}),
     },
     evidence: [
-        { id: 'c6_heirloom', name: { th: 'ปิ่นปักผมโบราณ', en: 'Ancient Hairpin' }, description: { th: 'ปิ่นปักผมที่สวยงาม แต่ให้ความรู้สึกเยือกเย็น มีคำสาปสลักไว้', en: 'A beautiful hairpin that feels unnaturally cold, with a curse carved into it.' }, image: `${baseUrl}clue13.png` },
+        { id: 'c6_heirloom', name: { th: 'ปิ่นปักฉันโบราณ', en: 'Ancient Hairpin' }, description: { th: 'ปิ่นปักฉันที่สวยงาม แต่ให้ความรู้สึกเยือกเย็น มีคำสาปสลักไว้', en: 'A beautiful hairpin that feels unnaturally cold, with a curse carved into it.' }, image: `${baseUrl}clue13.png` },
         { id: 'c6_history_book', name: { th: 'บันทึกตระกูล', en: 'Family Chronicle' }, description: { th: 'หนังสือที่เล่าถึงประวัติของต้องสาปและผู้ที่ตกเป็นเหยื่อ', en: 'A book detailing the history of the cursed object and its previous victims.' }, image: `${baseUrl}clue14.png` },
     ],
     clues: [
-        { id: 'c6_clue1', text: { th: 'ปิ่นปักผมโบราณตกอยู่ใกล้ศพ', en: 'An ancient hairpin was dropped near the body.' }, position: { x: 8, z: 8 }, evidenceId: 'c6_heirloom', type: 'static' },
+        { id: 'c6_clue1', text: { th: 'ปิ่นปักฉันโบราณตกอยู่ใกล้ศพ', en: 'An ancient hairpin was dropped near the body.' }, position: { x: 8, z: 8 }, evidenceId: 'c6_heirloom', type: 'static' },
         { id: 'c6_clue2', text: { th: 'บันทึกเก่าแก่เกี่ยวกับคำสาปถูกทิ้งไว้', en: 'An old chronicle about the curse was left behind.' }, position: { x: -18, z: 18 }, evidenceId: 'c6_history_book', type: 'static' },
         { id: 'c6_clue3', text: { th: 'เสียงกระซิบเตือนถึง "ความโลภ" ดังมาจากป้ายหลุมศพเก่า', en: 'A whisper warns of "greed" from an old tombstone.' }, position: { x: -50, z: 10 }, type: 'whisper' },
         { id: 'c6_clue4', text: { th: 'สัญลักษณ์ของตระกูลถูกขีดฆ่าบนต้นไม้', en: 'The family crest has been crossed out on a tree.' }, position: { x: 50, z: -10 }, type: 'symbol' },
@@ -498,13 +532,13 @@ const case6: CaseData = {
     },
     genericReactions: {
         murderer: [
-            { th: "ท่านได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของข้า!", en: "Where did you get this?! It's not mine!" },
+            { th: "คุณได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของฉัน!", en: "Where did you get this?! It's not mine!" },
             { th: "นี่มัน... เรื่องเข้าใจผิดกันไปใหญ่แล้ว", en: "This... this is a huge misunderstanding." }
         ],
         innocent: [
-            { th: "ข้าไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
+            { th: "ฉันไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
             { th: "สิ่งนี้เกี่ยวข้องกับเรื่องที่เกิดขึ้นได้อย่างไร?", en: "What does this have to do with anything?" },
-            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของข้า", en: "That's interesting, but it's not mine." }
+            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของฉัน", en: "That's interesting, but it's not mine." }
         ]
       }
 };
@@ -551,13 +585,13 @@ const case7: CaseData = {
     },
     genericReactions: {
         murderer: [
-            { th: "ท่านได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของข้า!", en: "Where did you get this?! It's not mine!" },
+            { th: "คุณได้สิ่งนี้มาจากไหน?! มันไม่ใช่ของฉัน!", en: "Where did you get this?! It's not mine!" },
             { th: "นี่มัน... เรื่องเข้าใจผิดกันไปใหญ่แล้ว", en: "This... this is a huge misunderstanding." }
         ],
         innocent: [
-            { th: "ข้าไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
+            { th: "ฉันไม่เคยเห็นสิ่งนี้มาก่อนเลยในชีวิต", en: "I've never seen this before in my life." },
             { th: "สิ่งนี้เกี่ยวข้องกับเรื่องที่เกิดขึ้นได้อย่างไร?", en: "What does this have to do with anything?" },
-            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของข้า", en: "That's interesting, but it's not mine." }
+            { th: "ดูน่าสนใจนะ แต่มันไม่ใช่ของฉัน", en: "That's interesting, but it's not mine." }
         ]
       }
 };

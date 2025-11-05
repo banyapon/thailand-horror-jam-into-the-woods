@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import * as THREE from 'three';
 import { NPC } from './npc';
@@ -451,6 +452,28 @@ export const createAnimationLoop = (gameDataRef: React.MutableRefObject<any>, ca
 
         const isGameLogicPaused = !!gameData.interactingNpc || gameData.isInventoryOpen || gameData.isSurvivalJournalOpen || gameData.isMapView || !!gameData.cinematicData || !!gameData.ritualData?.pendingDeath || !!gameData.ritualData?.endingData || !!gameData.tigerData;
 
+        // --- Calm Wind Sound Logic ---
+        if (!isGameLogicPaused && (gameData.gameState === 'playing' || gameData.gameState === 'ritual_playing')) {
+            gameData.calmWindTimer -= delta;
+            if (gameData.calmWindTimer <= 0) {
+                const calmWindSound = gameData.calmWindAudio;
+                if (calmWindSound && !calmWindSound.isPlaying && calmWindSound.buffer) {
+                    calmWindSound.play();
+                    const duration = calmWindSound.buffer.duration;
+                    const randomPause = 20 + Math.random() * 40; // 20-60s pause
+                    gameData.calmWindTimer = duration + randomPause;
+                } else if (!calmWindSound?.buffer) {
+                    // Sound not loaded yet, retry in a bit
+                    gameData.calmWindTimer = 5;
+                } else if (calmWindSound.isPlaying) {
+                    // Is playing, reset timer to avoid re-triggering immediately
+                    const duration = calmWindSound.buffer.duration;
+                    const randomPause = 20 + Math.random() * 40;
+                    gameData.calmWindTimer = Math.max(0, duration - calmWindSound.context.currentTime + calmWindSound.offset) + randomPause;
+                }
+            }
+        }
+
         // --- Weather Logic (Story Mode) ---
         if (gameData.gameMode === 'story' && gameData.gameState === 'playing' && !isGameLogicPaused) {
             gameData.weatherChangeTimer -= delta;
@@ -673,25 +696,39 @@ export const createAnimationLoop = (gameDataRef: React.MutableRefObject<any>, ca
             }
         }
 
-        let closestClueDist = Infinity;
-        let closestClueForMarker: { position: { x: number, z: number }; id: string } | null = null;
+        let closestClueForMarker: { position: any; id: string } | null = null;
         
         if (gameData.gameMode === 'story') {
-            gameData.clueObjects.forEach((clue: Clue) => {
-                if (!gameData.foundClueIds.has(clue.id)) {
-                    const cluePos = clue.type === 'symbol' 
-                        ? gameData.symbolClues.find((sc: any) => sc.clue.id === clue.id)?.mesh.position
-                        : new THREE.Vector3(clue.position.x, 0, clue.position.z);
-                    
+             if (gameData.forceObjectiveClueId && !gameData.foundClueIds.has(gameData.forceObjectiveClueId)) {
+                const hintedClue = gameData.clueObjects.find((c: Clue) => c.id === gameData.forceObjectiveClueId);
+                if (hintedClue) {
+                    const cluePos = hintedClue.type === 'symbol' 
+                        ? gameData.symbolClues.find((sc: any) => sc.clue.id === hintedClue.id)?.mesh.position
+                        : new THREE.Vector3(hintedClue.position.x, 0, hintedClue.position.z);
                     if (cluePos) {
-                        const dist = controlledCharacter.mesh.position.distanceTo(cluePos);
-                        if (dist < closestClueDist) {
-                            closestClueDist = dist;
-                            closestClueForMarker = { position: cluePos, id: clue.id };
-                        }
+                        closestClueForMarker = { position: cluePos, id: hintedClue.id };
                     }
                 }
-            });
+            }
+        
+            if (!closestClueForMarker) {
+                let closestClueDist = Infinity;
+                gameData.clueObjects.forEach((clue: Clue) => {
+                    if (!gameData.foundClueIds.has(clue.id)) {
+                        const cluePos = clue.type === 'symbol' 
+                            ? gameData.symbolClues.find((sc: any) => sc.clue.id === clue.id)?.mesh.position
+                            : new THREE.Vector3(clue.position.x, 0, clue.position.z);
+                        
+                        if (cluePos) {
+                            const dist = controlledCharacter.mesh.position.distanceTo(cluePos);
+                            if (dist < closestClueDist) {
+                                closestClueDist = dist;
+                                closestClueForMarker = { position: cluePos, id: clue.id };
+                            }
+                        }
+                    }
+                });
+            }
         }
         
         if (closestClueForMarker) {
@@ -700,13 +737,13 @@ export const createAnimationLoop = (gameDataRef: React.MutableRefObject<any>, ca
             const camForward = new THREE.Vector3();
             gameData.camera.camera.getWorldDirection(camForward);
 
-            if (targetVec.dot(camForward) < 0) {
+            if (targetVec.dot(camForward) < 0 && !gameData.forceObjectiveClueId) {
                 setObjective(null);
             } else {
                 const screenPos = cluePosVec.clone().project(gameData.camera.camera);
                 const isOffScreen = screenPos.x < -1 || screenPos.x > 1 || screenPos.y < -1 || screenPos.y > 1;
 
-                if (isOffScreen) {
+                if (isOffScreen || gameData.forceObjectiveClueId) {
                     const centerX = window.innerWidth / 2;
                     const centerY = window.innerHeight / 2;
                     const angleRad = Math.atan2(screenPos.y, screenPos.x);
@@ -714,8 +751,9 @@ export const createAnimationLoop = (gameDataRef: React.MutableRefObject<any>, ca
                     const PADDING = 60;
                     const xEdge = Math.cos(angleRad) * (centerX - PADDING) + centerX;
                     const yEdge = Math.sin(angleRad) * (centerY - PADDING) * -1 + centerY;
+                    const distance = Math.round(controlledCharacter.mesh.position.distanceTo(cluePosVec));
 
-                    setObjective({ x: xEdge, y: yEdge, rotation: -angleDeg + 90, distance: Math.round(closestClueDist) });
+                    setObjective({ x: xEdge, y: yEdge, rotation: -angleDeg + 90, distance });
                 } else {
                     setObjective(null);
                 }
@@ -867,7 +905,7 @@ export const createAnimationLoop = (gameDataRef: React.MutableRefObject<any>, ca
             gameData.npcs.forEach((npc: NPC, index: number) => {
                 npc.isControlled = (index === ritual.controlledNpcIndex && npc.status === 'alive');
                 if (npc.isControlled) {
-                    const speed = Player.PLAYER_SPEED;
+                    const speed = gameData.keys['shift'] ? Player.PLAYER_SPEED * 1.75 : Player.PLAYER_SPEED;
                     const targetVelocity = new THREE.Vector3();
     
                     if (!isGameLogicPaused) {

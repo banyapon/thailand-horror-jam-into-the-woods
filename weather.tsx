@@ -1,3 +1,4 @@
+
 import { useEffect, RefObject } from 'react';
 import * as THREE from 'three';
 
@@ -36,38 +37,38 @@ export function useWeatherEffects(
 
         if (weather === 'rain') {
             if (rainGroup) rainGroup.visible = true;
-            if (rainAudio && !rainAudio.isPlaying) rainAudio.play();
-            if (windAudio && windAudio.isPlaying) windAudio.stop();
+            if (rainAudio && !rainAudio.isPlaying && gameState !== 'paused') rainAudio.play();
+            if (windAudio && windAudio.isPlaying) windAudio.pause();
             fog.density = 0.0245;
 
             ambientLightTarget.color.setHex(0x303550);
-            ambientLightTarget.intensity = 0.18;
+            ambientLightTarget.intensity = 0.28; // Increased from 0.22
             
             dirLightTarget.color.setHex(0x405070);
-            dirLightTarget.intensity = 0.3;
+            dirLightTarget.intensity = 0.42; // Increased from 0.4
 
             if(godRay) godRay.visible = false;
 
         } else if (weather === 'foggy') {
             if (rainGroup) rainGroup.visible = false;
             splashMeshes?.forEach(s => s.visible = false);
-            if (rainAudio && rainAudio.isPlaying) rainAudio.stop();
-            if (windAudio && !windAudio.isPlaying) windAudio.play();
+            if (rainAudio && rainAudio.isPlaying) rainAudio.pause();
+            if (windAudio && !windAudio.isPlaying && gameState !== 'paused') windAudio.play();
             fog.density = 0.042;
             
             ambientLightTarget.color.setHex(0x404050);
-            ambientLightTarget.intensity = 0.24;
+            ambientLightTarget.intensity = 0.35; // Increased from 0.30
 
             dirLightTarget.color.setHex(0x505560); 
-            dirLightTarget.intensity = 0.096;
+            dirLightTarget.intensity = 0.20; // Increased from 0.15
 
             if(godRay) godRay.visible = false;
 
         } else { // clear
             if (rainGroup) rainGroup.visible = false;
             splashMeshes?.forEach(s => s.visible = false);
-            if (rainAudio && rainAudio.isPlaying) rainAudio.stop();
-            if (windAudio && !windAudio.isPlaying) windAudio.play();
+            if (rainAudio && rainAudio.isPlaying) rainAudio.pause();
+            if (windAudio && !windAudio.isPlaying && gameState !== 'paused') windAudio.play();
             fog.density = 0.0189;
             
             ambientLightTarget.color.setHex(0x405070);

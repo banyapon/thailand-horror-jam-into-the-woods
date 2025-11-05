@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 
 const FRAMES_PER_SPRITE_ROW = 4;
@@ -254,7 +255,7 @@ export class Player extends Character {
     this.currentWeather = weather;
     
     const targetVelocity = new THREE.Vector3();
-    const speed = Player.PLAYER_SPEED;
+    const speed = keys['shift'] ? Player.PLAYER_SPEED * 1.75 : Player.PLAYER_SPEED;
 
     if (!isPaused) {
         // Keyboard controls

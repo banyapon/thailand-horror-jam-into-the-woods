@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
@@ -52,6 +53,7 @@ const Game = () => {
     const [isPresentingEvidence, setPresentingEvidence] = useState(false);
     const [hintText, setHintText] = useState<string | null>(null);
     const [joystickVector, setJoystickVector] = useState({ x: 0, y: 0 });
+    const [forceObjectiveClueId, setForceObjectiveClueId] = useState<string | null>(null);
     
     const gameDataRef = useRef<{
         camera?: PostProcessingCamera,
@@ -81,6 +83,7 @@ const Game = () => {
         accusationsLeft: number,
         sfxAudio?: THREE.Audio,
         windAudio?: THREE.Audio,
+        calmWindAudio?: THREE.Audio,
         rainAudio?: THREE.Audio,
         ghostAudio?: THREE.Audio,
         music?: {
@@ -149,6 +152,7 @@ const Game = () => {
         losingCinematicData: { ghost?: Ghost | null; phase?: 'running' | 'attacking' | 'finished'; timer?: number; target?: Player | NPC; } | null;
         gameplayTimer: number;
         nextNpcDeathTimer: number;
+        calmWindTimer: number;
         symbolClues: { mesh: THREE.Mesh, clue: Clue }[];
         playerStationaryFor: number;
         interactionTargetClue: Clue | null;
@@ -201,6 +205,7 @@ const Game = () => {
         loreObjects: { object: LoreObject, mesh: THREE.Mesh }[],
         interactionTargetLore: LoreObject | null,
         joystickVector: { x: number; y: number };
+        forceObjectiveClueId: string | null;
     }>({ 
         npcs: [], 
         keys: {}, 
@@ -265,6 +270,7 @@ const Game = () => {
         losingCinematicData: null,
         gameplayTimer: 0,
         nextNpcDeathTimer: 900, // 15 minutes
+        calmWindTimer: 10 + Math.random() * 20,
         symbolClues: [],
         playerStationaryFor: 0,
         interactionTargetClue: null,
@@ -280,6 +286,7 @@ const Game = () => {
         loreObjects: [],
         interactionTargetLore: null,
         joystickVector: { x: 0, y: 0 },
+        forceObjectiveClueId: null,
     });
 
     useEffect(() => {
@@ -378,6 +385,8 @@ const Game = () => {
     useEffect(() => { gameDataRef.current.language = language; }, [language]);
     useEffect(() => { gameDataRef.current.isPresentingEvidence = isPresentingEvidence; }, [isPresentingEvidence]);
     useEffect(() => { gameDataRef.current.joystickVector = joystickVector; }, [joystickVector]);
+    useEffect(() => { gameDataRef.current.forceObjectiveClueId = forceObjectiveClueId; }, [forceObjectiveClueId]);
+
 
     useEffect(() => {
         if (gameDataRef.current.music?.exploration) {
@@ -497,6 +506,9 @@ const Game = () => {
             // Priority 2: Clues
             const clueToCollect = gameDataRef.current.interactionTargetClue;
             if (clueToCollect) {
+                if (clueToCollect.id === forceObjectiveClueId) {
+                    setForceObjectiveClueId(null);
+                }
                 gameDataRef.current.foundClueIds.add(clueToCollect.id);
                 let popupText = clueToCollect.text[language];
                 if (clueToCollect.evidenceId) {
@@ -535,7 +547,7 @@ const Game = () => {
                 }
             }
         }
-    }, [isInventoryOpen, playSfx, sfxVolume, language]);
+    }, [isInventoryOpen, playSfx, sfxVolume, language, forceObjectiveClueId]);
 
     const handlePresentEvidence = useCallback((evidenceId: string) => {
         if (!currentDialogue || !gameDataRef.current.activeCase) return;
@@ -579,6 +591,11 @@ const Game = () => {
                 setPresentingEvidence(true);
                 setFocusedOptionIndex(null);
                 return;
+            } else if (option.action.type === 'point_to_clue') {
+                const clueId = option.action.payload.clueId;
+                if (!gameData.foundClueIds.has(clueId)) {
+                    setForceObjectiveClueId(clueId);
+                }
             }
             if (option.action.type === 'collect_evidence') {
                 const evidenceId = option.action.payload.evidenceId;
@@ -695,6 +712,7 @@ const Game = () => {
             gameData.music.demon?.stop();
         }
         gameData.windAudio?.stop();
+        gameData.calmWindAudio?.stop();
         gameData.rainAudio?.stop();
         gameData.ghostAudio?.stop();
         if (gameData.activeWhisperSound) {
@@ -709,7 +727,7 @@ const Game = () => {
             billboards: [], clueObjects: [], clueLights: [], murderer: null, collectedEvidence: [],
             foundClueIds: new Set(), accusationsLeft: 3, scene: undefined, player: undefined,
             enemy: undefined, camera: undefined, audioListener: audioListener, sfxAudio: undefined,
-            windAudio: undefined, rainAudio: undefined, ghostAudio: undefined, music: undefined, rainGroup: undefined,
+            windAudio: undefined, calmWindAudio: undefined, rainAudio: undefined, ghostAudio: undefined, music: undefined, rainGroup: undefined,
             splashMeshes: [], splashAnims: [], raycaster: undefined, groundMesh: undefined,
             gamepadPrevState: { buttons: Array(16).fill(false) }, crowTexture: undefined,
             crowTriggerObjects: [], activeCrows: [], lightningFlashTimer: 0, 
@@ -733,6 +751,7 @@ const Game = () => {
             cinematicData: null, bloodEffects: [],
             bobTimer: 0, introData: null, winningCinematicData: null, losingCinematicData: null,
             gameplayTimer: 0, nextNpcDeathTimer: 900,
+            calmWindTimer: 10 + Math.random() * 20,
             symbolClues: [], playerStationaryFor: 0, interactionTargetClue: null, activeWhisperSound: null,
             isPresentingEvidence: false,
             ritualData: null,
@@ -746,7 +765,9 @@ const Game = () => {
             loreObjects: [],
             interactionTargetLore: null,
             joystickVector: { x: 0, y: 0 },
+            forceObjectiveClueId: null,
         });
+        setForceObjectiveClueId(null);
     }, []);
 
     const initializeAndPlayTitleBgm = useCallback(() => {
@@ -803,30 +824,52 @@ const Game = () => {
     useEffect(() => {
         const { music, rainAudio, windAudio } = gameDataRef.current;
         const isPlaying = gameState === 'playing' || gameState === 'ritual_playing';
+        const isPaused = gameState === 'paused' || isInventoryOpen || isSurvivalJournalOpen;
     
-        if (gameState === 'paused' || isSurvivalJournalOpen) {
-            if (rainAudio?.isPlaying) rainAudio.pause();
-            if (windAudio?.isPlaying) windAudio.pause();
-            if (music?.exploration?.isPlaying) music.exploration.pause();
-        } else if (isPlaying) {
-            if (music?.exploration && !music.exploration.isPlaying && !music.demon?.isPlaying) {
-                music.exploration.play();
-            }
-
-            if (weather === 'rain') {
-                if (rainAudio && !rainAudio.isPlaying) rainAudio.play();
-                if (windAudio && windAudio.isPlaying) windAudio.stop();
+        const isGameSessionActive = ['intro', 'briefing', 'playing', 'ritual_playing', 'paused', 'winning_cinematic', 'losing_cinematic', 'ritual_ending'].includes(gameState) || isInventoryOpen || isSurvivalJournalOpen;
+    
+        // Music
+        if (isGameSessionActive) {
+            if (music?.demon?.isPlaying) {
+                if (music?.exploration?.isPlaying) {
+                    music.exploration.pause();
+                }
             } else {
-                if (rainAudio && rainAudio.isPlaying) rainAudio.stop();
-                if (windAudio && !windAudio.isPlaying) windAudio.play();
+                if (music?.exploration && !music.exploration.isPlaying) {
+                    music.exploration.play();
+                }
+            }
+        } else {
+            // Not in a game session, stop all game music.
+            if (music?.exploration?.isPlaying) {
+                music.exploration.stop();
+            }
+            if(music?.demon?.isPlaying) {
+                music.demon.stop();
             }
         }
-    }, [gameState, weather, isSurvivalJournalOpen]);
+    
+        // Ambient sounds can still be paused
+        if (isPlaying && !isPaused && weather === 'rain') {
+            if (rainAudio && !rainAudio.isPlaying) rainAudio.play();
+        } else {
+            if (rainAudio?.isPlaying) rainAudio.pause();
+        }
+    
+        if (isPlaying && !isPaused && weather !== 'rain') {
+            if (windAudio && !windAudio.isPlaying) windAudio.play();
+        } else {
+            if (windAudio?.isPlaying) windAudio.pause();
+        }
+    }, [gameState, weather, isSurvivalJournalOpen, isInventoryOpen]);
     
     useEffect(() => {
         const gameData = gameDataRef.current;
         if (gameData.windAudio) {
             gameData.windAudio.setVolume(sfxVolume * 0.4);
+        }
+        if (gameData.calmWindAudio) {
+            gameData.calmWindAudio.setVolume(sfxVolume * 0.5);
         }
         if (gameData.rainAudio) {
             gameData.rainAudio.setVolume(sfxVolume * 0.8);
@@ -961,6 +1004,7 @@ const Game = () => {
         setMapViewTarget(null);
         setGameState('initial');
         setSurvivalJournalOpen(false);
+        setForceObjectiveClueId(null);
     }, []);
 
     const getHint = () => {
@@ -992,9 +1036,6 @@ const Game = () => {
     };
 
     useEffect(() => {
-        if (gameDataRef.current.music?.exploration?.isPlaying) {
-            gameDataRef.current.music.exploration.stop();
-        }
         if (gameState === 'finish_screen') {
             if (gameMode === 'story') {
                 const timer = setTimeout(() => {
@@ -1088,6 +1129,7 @@ const Game = () => {
         gameData.camera.camera.add(gameData.audioListener);
         gameData.sfxAudio = new THREE.Audio(gameData.audioListener);
         gameData.windAudio = new THREE.Audio(gameData.audioListener);
+        gameData.calmWindAudio = new THREE.Audio(gameData.audioListener);
         gameData.rainAudio = new THREE.Audio(gameData.audioListener);
         gameData.ghostAudio = new THREE.Audio(gameData.audioListener);
         gameData.raycaster = new THREE.Raycaster();
@@ -1099,7 +1141,7 @@ const Game = () => {
                 if (targetNode) {
                     targetNode.setBuffer(buffer);
                     targetNode.setLoop(loop);
-                    const finalVolume = (id === 'wind' || id === 'rain' || id === 'ghost_loop' ? sfxVolume * volume : volume * sfxVolume);
+                    const finalVolume = (id === 'wind' || id === 'rain' || id === 'ghost_loop' || id === 'wind_calm' ? sfxVolume * volume : volume * sfxVolume);
                     targetNode.setVolume(finalVolume);
                     if (id === 'wind' && weather === 'clear' && gameState === 'playing') targetNode.play();
                 }
@@ -1132,6 +1174,7 @@ const Game = () => {
         loadSound('footsteps_grass', `${baseSoundUrl}footsteps.mp3`, undefined, true);
         loadSound('footsteps_splash', `${baseSoundUrl}footsteps.mp3`, undefined, true);
         loadSound('wind', `${baseSoundUrl}wind_clam.mp3`, gameData.windAudio, true, 0.4);
+        loadSound('wind_calm', `${baseSoundUrl}wind_calm.mp3`, gameData.calmWindAudio, false, 0.5);
         loadSound('rain', `${baseSoundUrl}rain.ogg`, gameData.rainAudio, true, 0.8);
         loadSound('ghost_loop', `${baseSoundUrl}ghost.mp3`, gameData.ghostAudio, true, 0.7);
         loadSound('thunder', `${baseSoundUrl}thunder.ogg`);
