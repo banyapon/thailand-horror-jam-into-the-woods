@@ -254,7 +254,7 @@ export const UIManager: React.FC<UIProps> = (props) => {
 
     const renderStartMenu = () => (
         <div className="title-menu">
-            <h1 className="thename">Into the Woods</h1>
+            <h1 className="thename">In to the Woods</h1>
             <div className="start-menu-buttons">
                 <div onClick={() => onMenuSelect('start')} className={`menu-item ${startMenuFocusIndex === 0 ? 'focused' : ''}`}>
                     {t.startGame}
@@ -282,7 +282,7 @@ export const UIManager: React.FC<UIProps> = (props) => {
             <div>
                 <h1>{t.options}</h1>
                 <div className="options-panel">
-                    <div className="options-credits">WASD, Arrows Keys and Virtual Joystick for Movement, Mouse Click or (E) (H) and (P) for Inspect/ Hint and Communication, Hold (Shift) Button to Run </div>
+                    <div className="options-credits">WASD, Arrows Keys and Virtual Joystick for Movement, Mouse Click or (E) and (P) for Inspect/Talk and Communication</div>
                     <div className="option-item">
                         <label className={startMenuFocusIndex === 0 ? 'focused' : ''}>BGM</label>
                         <input type="range" min="0" max="1" step="0.1" value={bgmVolume} onChange={(e) => onBgmVolumeChange(parseFloat(e.target.value))} />
