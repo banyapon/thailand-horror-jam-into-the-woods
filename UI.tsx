@@ -254,7 +254,7 @@ export const UIManager: React.FC<UIProps> = (props) => {
 
     const renderStartMenu = () => (
         <div className="title-menu">
-            <h1 className="thename">In to the Woods</h1>
+            <h1 className="thename">Into the Woods</h1>
             <div className="start-menu-buttons">
                 <div onClick={() => onMenuSelect('start')} className={`menu-item ${startMenuFocusIndex === 0 ? 'focused' : ''}`}>
                     {t.startGame}

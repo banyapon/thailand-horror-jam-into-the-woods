@@ -235,14 +235,14 @@ canvas {
     position: absolute;
     top: -5%;
     left: -5%;
-    width: 110%;
-    height: 110%;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
     background-image: url('/images/title.jpg');
-    background-position: center center;
+    background-position: top center;
     backdrop-filter: blur(5px);
     animation:
-        scale-in-background 40s ease-in-out infinite alternate,
+        scale-in-background 10s ease-in-out infinite alternate,
         background-glitch 6s infinite steps(1, end);
     transition: transform 0.2s ease-out;
 }
@@ -449,8 +449,11 @@ canvas {
     font-size: clamp(2rem, 4.5vw, 7rem);
     white-space: nowrap;
     margin-bottom: 0.3rem;
-    color: #f11000;
-    text-shadow: 2px 2px 0 #000, 4px 4px 0 rgba(0, 0, 0, 0.5);
+    /* เปลี่ยนจาก color เป็น background-image สำหรับ gradient */
+    background-image: linear-gradient(to bottom, #FF0000, #8B0000); /* แดงสดไปแดงเข้ม */
+    -webkit-background-clip: text; /* ทำให้ gradient แสดงผลเฉพาะในตัวอักษร */
+    -webkit-text-fill-color: transparent; /* ทำให้ข้อความโปร่งใสเพื่อแสดง gradient */
+    text-shadow: 2px 2px 0 #6a0000, 4px 4px 0 rgba(0, 0, 0, 0.5);
     margin-top: 5rem;
 }
 
